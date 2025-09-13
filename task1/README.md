@@ -56,15 +56,6 @@ psql -h 127.0.0.1 -U app_user -d demo_db -c "select version();"
 * **db**: PostgreSQL 17, локаль `ru_RU.UTF-8`, шифрование паролей `scram-sha-256`, healthcheck (`pg_isready`), автоматический рестарт.
 * **app**: Python‑клиент. Берёт `host/port/dbname/sslmode` из `app/config.yaml`, логин/пароль спрашивает интерактивно, мержит по белому списку — никакого инъектируемого DSN.
 
-### 🗺 Диаграмма (Mermaid)
-
-```mermaid
-graph LR
-  A[User (CLI)] -->|stdin: user/pass| B[app container]
-  B -->|TCP 5432| C[(db container: PostgreSQL 17)]
-  C -->|Docker network| B
-```
-
 --- 
 
 ## 🔐 Безопасность: SCRAM коротко
@@ -103,4 +94,3 @@ docker compose down -v && docker compose up --build -d
 
 MIT
 
----
