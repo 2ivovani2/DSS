@@ -1,0 +1,14 @@
+[
+  {
+    "name": "AWP",
+    "wclass": "Rifle"
+  },
+  {
+    "name": "Glock-18",
+    "wclass": "Pistol"
+  },
+  {
+    "name": "USP-S",
+    "wclass": "Pistol"
+  }
+]
