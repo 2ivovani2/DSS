@@ -1,0 +1,44 @@
+services:
+  vault:
+    image: hashicorp/vault:latest
+    container_name: vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root
+      VAULT_DEV_LISTEN_ADDRESS: "0.0.0.0:8200"
+    volumes:
+      - ./vault-data:/vault/file
+      - ./policy.hcl:/vault/policy.hcl
+    cap_add:
+      - IPC_LOCK
+    command: vault server -dev
+  db:
+    build: ./db
+    container_name: dss_task2_db
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - pgdata_task2:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "appuser"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  pinger:
+    build: ./app
+    container_name: dss_task2_pinger
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/var/log
+volumes:
+  pgdata_task2:
