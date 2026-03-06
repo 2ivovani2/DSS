@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h3 class="mb-3">Таблицы базы</h3>
+
+<div class="list-group">
+{% for t in tables %}
+<a class="list-group-item list-group-item-action"
+   href="/tables/{{t}}">
+   {{t}}
+</a>
+{% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between mb-3">
+<h3>{{table}}</h3>
+
+<div>
+<a class="btn btn-success btn-sm" href="/insert/{{table}}">+ Добавить</a>
+<a class="btn btn-secondary btn-sm" href="/index">← Назад</a>
+</div>
+</div>
+
+<table class="table table-striped table-bordered">
+<thead>
+<tr>
+{% for k in rows[0].keys() %}
+<th>{{k}}</th>
+{% endfor %}
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+{% for r in rows %}
+<tr>
+{% for v in r.values() %}
+<td>{{v}}</td>
+{% endfor %}
+
+<td>
+<a class="btn btn-warning btn-sm"
+   href="/update/{{table}}/{{r.id}}">
+   Edit
+</a>
+</td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}

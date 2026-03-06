@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h3 class="mb-3">Добавить запись</h3>
+
+<form method="post" action="/insert/{{table}}" style="max-width:500px">
+
+<label class="form-label">JSON данные</label>
+<textarea class="form-control mb-3" name="json_data" rows="4"
+placeholder='{"name":"test","value":123}'></textarea>
+
+<button class="btn btn-success">Добавить</button>
+<a class="btn btn-secondary" href="/tables/{{table}}">Назад</a>
+
+</form>
+
+{% endblock %}
