@@ -1,22 +1,200 @@
-# task3 — CS:GO Skins Marketplace
+# Лабораторная работа №7
 
-## Быстрый старт (Docker Compose)
-1) `docker compose up --build` — поднимет Postgres и CLI контейнер.
-2) Применить SQL:
+## Веб-интерфейс для работы с базой данных
+
+### Описание
+
+В рамках лабораторной работы разработано веб-приложение для работы с базой данных PostgreSQL.
+Приложение позволяет выполнять основные операции с данными через веб-интерфейс: просмотр таблиц, добавление новых записей и обновление существующих.
+
+Приложение реализовано на Python с использованием **FastAPI**, а пользовательский интерфейс построен с помощью **Bootstrap**.
+Для контейнеризации и запуска используется **Docker** и **Docker Compose**.
+
+---
+
+# Функциональность приложения
+
+### 1. Авторизация пользователя
+
+При запуске приложения пользователь попадает на страницу входа.
+
+Необходимо ввести:
+
+* логин пользователя БД
+* пароль пользователя БД
+
+Если данные корректны, происходит подключение к базе данных и переход на главную страницу приложения.
+
+Неудачные попытки входа логируются в файл `auth.log`.
+
+---
+
+### 2. Главная страница
+
+На главной странице отображается список доступных таблиц базы данных.
+
+Пользователь может:
+
+* открыть таблицу
+* просмотреть её содержимое
+
+---
+
+### 3. Просмотр таблиц
+
+Для каждой таблицы отображается:
+
+* список всех строк
+* кнопка перехода на добавление записи
+* кнопка редактирования строки
+
+Данные выводятся в виде таблицы.
+
+---
+
+### 4. Добавление новых записей
+
+Для каждой таблицы доступна страница добавления записи.
+
+Пользователь вводит данные в формате JSON.
+
+После отправки формы данные добавляются в базу данных и происходит возврат к таблице.
+
+---
+
+### 5. Обновление записей
+
+Пользователь может редактировать существующие записи.
+
+После изменения данных и отправки формы выполняется SQL-запрос обновления.
+
+---
+
+# Безопасность
+
+Для предотвращения SQL-инъекций используется:
+
+* whitelist таблиц и колонок (`model_whitelist.py`)
+* параметризованные SQL-запросы
+
+Это гарантирует, что пользователь не сможет выполнить произвольный SQL-код.
+
+---
+
+# Используемые технологии
+
+* Python 3.11
+* FastAPI
+* Jinja2
+* Bootstrap 5
+* PostgreSQL
+* Docker
+* Docker Compose
+* psycopg2
+
+---
+
+# Структура проекта
+
 ```
-docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB -f docker-entrypoint-initdb.d/01_schema.sql
-docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB -f docker-entrypoint-initdb.d/02_seed.sql
-docker compose exec db psql -U $POSTGRES_USER -d $POSTGRES_DB -f docker-entrypoint-initdb.d/03_grants.sql
+task3
+│
+├─ app
+│  ├─ main.py                # основной веб-сервер
+│  ├─ db.py                  # работа с БД
+│  ├─ model_whitelist.py     # разрешённые таблицы и поля
+│  ├─ templates              # HTML шаблоны
+│  │   ├─ layout.html
+│  │   ├─ login.html
+│  │   ├─ index.html
+│  │   ├─ tables.html
+│  │   ├─ insert.html
+│  │   └─ update.html
+│  │
+│  └─ requirements.txt
+│
+├─ sql
+│   └─ init.sql              # создание таблиц
+│
+├─ docker-compose.yml
+├─ .env
+└─ README.md
 ```
-4) Запуск примеров:
+
+---
+
+# Запуск проекта
+
+## 1. Клонирование проекта
+
 ```
-docker compose exec app python /app/main.py view-all users
-docker compose exec app python /app/main.py view-where items --col owner_id --val 1
-docker compose exec app python /app/main.py view-where-many listings --json '{"status":"active","currency":"USD"}'
-docker compose exec app python /app/main.py insert-one users --json '{"username":"sh1ro","email":"sh1ro@example.com"}'
-docker compose exec app python /app/main.py update-one users --id 1 --json '{"email":"pro@example.com"}'
-docker compose exec app python /app/main.py update-many-same listings --target-col status --new-value cancelled --in-col id --in-values '[1,2,3]'
-docker compose exec app python /app/main.py insert-related
-docker compose exec app python /app/main.py bulk-insert weapons --file /app/sample_bulk_weapons.json
+git clone <repo>
+cd task3
 ```
-Логи летят в stdout/stderr и (при наличии `LOG_PATH`) дублируются в файл.
+
+---
+
+## 2. Запуск контейнеров
+
+Собрать и запустить контейнеры:
+
+```
+docker compose build
+docker compose up
+```
+
+---
+
+## 3. Открытие приложения
+
+После запуска приложение будет доступно по адресу:
+
+```
+http://localhost:8000
+```
+
+---
+
+# Использование
+
+1. Открыть страницу входа
+2. Ввести логин и пароль пользователя PostgreSQL
+3. Выбрать таблицу
+4. Просматривать, добавлять или редактировать записи
+
+---
+
+# Логирование
+
+Неудачные попытки входа записываются в файл:
+
+```
+auth.log
+```
+
+---
+
+# Docker
+
+Проект использует два контейнера:
+
+### 1. PostgreSQL
+
+Контейнер с базой данных.
+
+### 2. App
+
+Контейнер с веб-приложением FastAPI.
+
+Контейнеры запускаются через **docker-compose**.
+
+---
+
+# Результат
+
+В результате лабораторной работы разработано веб-приложение, позволяющее:
+
+* выполнять CRUD-операции с базой данных
+* безопасно передавать параметры SQL-запросов
+* запускать систему в контейнерах Docker
+* обеспечивать удобный веб-интерфейс для пользователя
